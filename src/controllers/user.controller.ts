@@ -100,14 +100,6 @@ export class UserController extends BaseController {
 		}
 	}
 
-	async fogotPassword(req: Request, res: Response, next: NextFunction) {
-		const { email } = req.body;
-		const searchUser = await this.userService.searchByEmail(email);
-		if (!searchUser) {
-			this.send(res, 401, 'User not found!');
-		}
-	}
-
 	fileLoader(req: Request, res: Response, next: NextFunction) {
 		const token = req.headers.authorization!.split(' ')[1];
 		const upload = multer(storageConfig).single('filedata');

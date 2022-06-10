@@ -48,6 +48,12 @@ export class AuthController extends BaseController {
 				func: this.updatePassword,
 				middlewares: [],
 			},
+			{
+				path: '/fogot-password',
+				methot: 'post',
+				func: this.fogotPassword,
+				middlewares: [],
+			},
 		]);
 	}
 
@@ -134,5 +140,18 @@ export class AuthController extends BaseController {
 			await this.userService.upDatePassword(req.body.pass, token);
 			this.ok(res, 'Your password was update');
 		}
+	}
+
+	async fogotPassword(req: Request, res: Response, next: NextFunction) {
+		const { email } = req.body;
+		console.log('email>>>', email);
+		const searchUser = await this.userService.searchByEmail(email);
+		if (!searchUser) {
+			this.send(res, 401, 'User not found!');
+			return;
+		}
+		this.ok(res, 'Your password ');
+		console.log('user>>>', searchUser);
+		return;
 	}
 }
