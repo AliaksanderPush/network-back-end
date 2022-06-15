@@ -12,6 +12,8 @@ import { IUserResponseToClient } from '../dto/userReregistrResponse';
 import { IJwtTokens, IRefreshToken, IToken } from '../dto/token.dto';
 import { JwtPayload, verify } from 'jsonwebtoken';
 import { IUserPayload } from '../dto/userPayload.dto';
+import { FriendsModel } from '../model/friends.model';
+import { IFriend } from '../dto/friends.dto';
 
 @injectable()
 export class UserService {
@@ -108,7 +110,7 @@ export class UserService {
 
 	async generateAndSaveTokens(id: string, email: string, role: string[]): Promise<IJwtTokens> {
 		try {
-			const tokens = this.tokenServise.generateTokens(email, role as string[]);
+			const tokens = this.tokenServise.generateTokens(email, role as string[], id);
 			await this.tokenServise.saveToken(id, tokens.refreshToken);
 			return tokens;
 		} catch (err) {
@@ -147,7 +149,25 @@ export class UserService {
 	}
 
 	async upDateAvatar(token: string, path: string) {
+		console.log('token>>>', token);
+		console.log('pATH>>>', path);
 		const email = this.getEmailByToken(token);
-		return await UserModel.updateOne({ email: email }, { avatar: path });
+		const result = await UserModel.updateOne({ email: email }, { avatar: path });
+		console.log('result>>>', result);
+		return result;
+	}
+
+	async addNewFriends(body: IFriend, userId: string, _id: string): Promise<IFriend> {
+		const newFriends = await new FriendsModel({
+			...body,
+			userName: body.userName,
+			userId,
+		}).save();
+
+		await UserModel.findByIdAndUpdate(_id, {
+			$addToSet: { contacts: newFriends._id },
+		});
+
+		return newFriends;
 	}
 }

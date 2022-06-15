@@ -5,7 +5,11 @@ import { Container } from 'inversify';
 import { TYPES } from './types';
 import { connection } from './configs/connect.config';
 import { TokenServise } from './service/token.service';
+import { ChatServise } from './service/chat.service';
 import { AuthController } from './controllers/auth.controller';
+import { ChatController } from './controllers/chat.controller';
+import { CommitsServise } from './service/commits.service';
+import { CommitsController } from './controllers/commits.controller';
 
 async function bootstrap() {
 	const container = new Container();
@@ -14,6 +18,14 @@ async function bootstrap() {
 	container.bind<UserService>(TYPES.UserService).to(UserService).inSingletonScope();
 	container.bind<TokenServise>(TYPES.TokenServise).to(TokenServise).inSingletonScope();
 	container.bind<AuthController>(TYPES.AuthController).to(AuthController).inSingletonScope();
+	container.bind<ChatController>(TYPES.ChatController).to(ChatController).inSingletonScope();
+	container.bind<ChatServise>(TYPES.ChatServise).to(ChatServise).inSingletonScope();
+	container.bind<CommitsServise>(TYPES.CommitsServise).to(CommitsServise).inSingletonScope();
+	container
+		.bind<CommitsController>(TYPES.CommitsController)
+		.to(CommitsController)
+		.inSingletonScope();
+
 	const app = container.get<App>(TYPES.App);
 	await app.init();
 	connection();

@@ -2,11 +2,13 @@ import { UserService } from './../service/user.service';
 import { Request, Response, NextFunction } from 'express';
 import { BaseController } from '../common/base.controller';
 import { injectable, inject } from 'inversify';
+import { IFriend } from '../dto/friends.dto';
 import { TYPES } from '../types';
 import multer from 'multer';
 import { RoleMidleware } from '../middleWares/roles.midleware';
 import { storageConfig } from '../configs/multer.config';
 import 'reflect-metadata';
+import { UserModel } from '../model/user.model';
 
 @injectable()
 export class UserController extends BaseController {
@@ -42,6 +44,18 @@ export class UserController extends BaseController {
 				func: this.refresh,
 				middlewares: [],
 			},
+			{
+				path: '/friends/:id',
+				methot: 'post',
+				func: this.addFriends,
+				middlewares: [],
+			},
+			{
+				path: '/getFriends',
+				methot: 'get',
+				func: this.getFriendsByName,
+				middlewares: [],
+			},
 		]);
 	}
 
@@ -53,7 +67,6 @@ export class UserController extends BaseController {
 	async updateUser(req: Request, res: Response, next: NextFunction) {
 		const id = req.params.id;
 		const data = req.body;
-
 		const response = await this.userService.putUser(id, data);
 		if (!response) {
 			this.send(res, 400, 'This user is not exist');
@@ -61,11 +74,11 @@ export class UserController extends BaseController {
 		}
 		const { roles, email } = response;
 		const tokens = await this.userService.generateAndSaveTokens(id, email, roles as string[]);
-
 		this.ok(res, {
 			token: { accesToken: tokens.accesToken, refreshToken: tokens.refreshToken },
 			searchUser: response,
 		});
+		return;
 	}
 
 	async removeUser(req: Request, res: Response, next: NextFunction) {
@@ -103,6 +116,7 @@ export class UserController extends BaseController {
 	fileLoader(req: Request, res: Response, next: NextFunction) {
 		const token = req.headers.authorization!.split(' ')[1];
 		const upload = multer(storageConfig).single('filedata');
+
 		upload(req, res, async (err) => {
 			if (err instanceof multer.MulterError) {
 				console.log(err);
@@ -110,13 +124,34 @@ export class UserController extends BaseController {
 			} else if (err) {
 				console.log(err);
 				res.status(400).send(' При загрузке произошла неизвестная ошибка.');
-			}
-			try {
+			} else {
+				console.log('weer>>', req.file?.filename);
 				await this.userService.upDateAvatar(token, req.file?.filename as string);
-				this.send(res, 200, req.file?.filename);
-			} catch (err) {
-				this.send(res, 401, 'User not found!');
+				return this.send(res, 200, req.file?.filename);
 			}
 		});
+	}
+
+	async addFriends(req: Request, res: Response, next: NextFunction) {
+		const { id } = req.params;
+
+		try {
+			const result = await this.userService.addNewFriends(req.body, id, req.user._id);
+			return this.ok(res, result);
+		} catch (err) {
+			console.log(err);
+			this.send(res, 400, 'Friend was not created!');
+		}
+	}
+
+	async getFriendsByName(req: Request, res: Response, next: NextFunction) {
+		console.log('id>>>');
+		try {
+			const result = await UserModel.findById(req.user._id).populate({ path: 'contacts' });
+			return this.ok(res, result);
+		} catch (err) {
+			console.log(err);
+			this.send(res, 400, 'Friend was not get!');
+		}
 	}
 }

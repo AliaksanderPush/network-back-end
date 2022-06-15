@@ -3,9 +3,11 @@ import { Server } from 'http';
 import { inject, injectable } from 'inversify';
 import { UserController } from './controllers/user.controller';
 import { AuthController } from './controllers/auth.controller';
+import { ChatController } from './controllers/chat.controller';
 import 'reflect-metadata';
 import { TYPES } from './types';
 import { AuthMiddleWare } from './middleWares/auth.middleware';
+import { CommitsController } from './controllers/commits.controller';
 import cors from 'cors';
 
 @injectable()
@@ -16,6 +18,8 @@ export class App {
 	constructor(
 		@inject(TYPES.UserController) private userController: UserController,
 		@inject(TYPES.AuthController) private authController: AuthController,
+		@inject(TYPES.ChatController) private chatController: ChatController,
+		@inject(TYPES.CommitsController) private commitsController: CommitsController,
 	) {
 		this.app = express();
 		this.port = process.env.PORT || 4000;
@@ -31,7 +35,9 @@ export class App {
 	}
 
 	useRouters() {
+		this.app.use('/commit', this.commitsController.router);
 		this.app.use('/auth', this.authController.router);
+		this.app.use('/chat', this.chatController.router);
 		this.app.use('/', this.userController.router);
 	}
 

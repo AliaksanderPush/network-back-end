@@ -9,8 +9,8 @@ export class AuthMiddleWare implements IMiddleware {
 			try {
 				const token = req.headers.authorization.split(' ')[1];
 				const decData = verify(token, process.env.SECRET as string) as IUserPayload;
-				const { email, role } = decData;
-				req.user = { email, role };
+				const { email, role, _id } = decData;
+				req.user = { email, role, _id };
 				next();
 			} catch (err) {
 				res.status(403).json('Пользователь не авторизован');

@@ -9,6 +9,7 @@ import { UserRegisterDto } from '../dto/userRegister.dto';
 import { ValidateMidleWare } from '../middleWares/validate.middleware';
 import { IUsers } from '../dto/user.dto';
 import 'reflect-metadata';
+import { nanoid } from 'nanoid';
 
 @injectable()
 export class AuthController extends BaseController {
@@ -150,6 +151,31 @@ export class AuthController extends BaseController {
 			this.send(res, 401, 'User not found!');
 			return;
 		}
+		const resetCode = nanoid(5).toUpperCase();
+		// save to db
+		/*
+		user.resetCode = resetCode;
+		user.save();
+		// prepare email
+		const emailData = {
+			from: process.env.EMAIL_FROM,
+			to: user.email,
+			subject: 'Password reset code',
+			html: `
+    <h4>Enter this code in the app to reset password</h4>
+    <h1 style="color:red;">${resetCode}</h1>
+    `,
+		};
+		// send email
+		try {
+			const data = await sgMail.send(emailData);
+			console.log(data);
+			res.json({ ok: true });
+		} catch (err) {
+			console.log(err);
+			res.json({ ok: false });
+		}
+        */
 		this.ok(res, 'Your password ');
 		console.log('user>>>', searchUser);
 		return;

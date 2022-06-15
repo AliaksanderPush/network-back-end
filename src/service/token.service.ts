@@ -8,14 +8,15 @@ import { TokenModel } from '../model/token.model';
 
 @injectable()
 export class TokenServise {
-	generateTokens(email: string, role: string[]): IJwtTokens {
+	generateTokens(email: string, role: string[], id: string): IJwtTokens {
 		const payLoad = {
 			email,
 			role,
+			_id: id,
 		};
 
 		const accesToken = sign(payLoad, process.env.SECRET!, {
-			expiresIn: '15m',
+			expiresIn: '1d',
 		});
 		const refreshToken = sign(payLoad, process.env.SECRET!, {
 			expiresIn: '15d',
@@ -64,7 +65,6 @@ export class TokenServise {
 
 	async findToken(refreshToken: string) {
 		const tokenData = await TokenModel.findOne({ refreshToken });
-		console.log;
 		return tokenData;
 	}
 }
