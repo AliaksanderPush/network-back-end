@@ -49,7 +49,7 @@ export class ChatController extends BaseController {
 	async deletePost(req: Request, res: Response, next: NextFunction) {
 		try {
 			const { id } = req.params;
-			await this.chatService.removePost(id);
+			await this.chatService.removePost(id, req.user._id);
 			return res.json({ ok: true });
 		} catch (err) {
 			console.log(err);

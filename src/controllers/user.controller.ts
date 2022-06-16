@@ -145,9 +145,8 @@ export class UserController extends BaseController {
 	}
 
 	async getFriendsByName(req: Request, res: Response, next: NextFunction) {
-		console.log('id>>>');
 		try {
-			const result = await UserModel.findById(req.user._id).populate({ path: 'contacts' });
+			const result = await this.userService.getFriends(req.user._id);
 			return this.ok(res, result);
 		} catch (err) {
 			console.log(err);

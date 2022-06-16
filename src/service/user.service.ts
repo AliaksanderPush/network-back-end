@@ -170,4 +170,12 @@ export class UserService {
 
 		return newFriends;
 	}
+
+	async getFriends(id: string): Promise<IUsers | null> {
+		const result = await UserModel.findById(id).populate({
+			path: 'contacts',
+			populate: { path: 'userId' },
+		});
+		return result;
+	}
 }

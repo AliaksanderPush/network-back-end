@@ -131,7 +131,7 @@ export class AuthController extends BaseController {
 				return this.ok(res, { token });
 			}
 		} catch (e) {
-			next(e);
+			console.log('logErr>>', e);
 		}
 	}
 

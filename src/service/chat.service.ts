@@ -47,15 +47,28 @@ export class ChatServise {
 		return upPost;
 	}
 
-	async removePost(postId: string) {
-		return await PostModel.findByIdAndDelete(postId);
+	async removePost(postId: string, _id: string) {
+		await PostModel.findByIdAndDelete(postId);
+		await UserModel.findByIdAndUpdate(_id, { $pull: { posts: postId } });
 	}
 
 	async getAllPost(): Promise<IPost[]> {
 		try {
-			return await PostModel.find();
+			return await PostModel.find()
+				.populate({
+					path: 'postedBy',
+					//populate: { path: 'posts' },
+				})
+				.sort({ createdAt: +1 });
 		} catch (err) {
 			return Promise.reject(err);
 		}
 	}
 }
+
+/*
+.populate({
+					path: 'postedBy',
+					populate: { path: 'posts' },
+				})
+				*/

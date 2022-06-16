@@ -8,7 +8,7 @@ const UserShema: Schema = new Schema({
 	age: { type: Number, required: false },
 	email: { type: String, unique: true, required: true },
 	gender: { type: String },
-	avatar: { type: String, required: false },
+	avatar: { type: String },
 	roles: [{ type: String, ref: 'Role' }],
 	resetCode: { type: String },
 	contacts: [{ type: Schema.Types.ObjectId, ref: 'FriendsModel' }],
