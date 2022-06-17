@@ -3,7 +3,7 @@ import { Server } from 'http';
 import { inject, injectable } from 'inversify';
 import { UserController } from './controllers/user.controller';
 import { AuthController } from './controllers/auth.controller';
-import { ChatController } from './controllers/chat.controller';
+import { PostController } from './controllers/post.controller';
 import 'reflect-metadata';
 import { TYPES } from './types';
 import { AuthMiddleWare } from './middleWares/auth.middleware';
@@ -18,7 +18,7 @@ export class App {
 	constructor(
 		@inject(TYPES.UserController) private userController: UserController,
 		@inject(TYPES.AuthController) private authController: AuthController,
-		@inject(TYPES.ChatController) private chatController: ChatController,
+		@inject(TYPES.PostController) private postController: PostController,
 		@inject(TYPES.CommitsController) private commitsController: CommitsController,
 	) {
 		this.app = express();
@@ -37,7 +37,7 @@ export class App {
 	useRouters() {
 		this.app.use('/commit', this.commitsController.router);
 		this.app.use('/auth', this.authController.router);
-		this.app.use('/chat', this.chatController.router);
+		this.app.use('/posts', this.postController.router);
 		this.app.use('/', this.userController.router);
 	}
 

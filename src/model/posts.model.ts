@@ -22,6 +22,8 @@ const postSchema = new Schema(
 			type: Schema.Types.ObjectId,
 			ref: 'UserModel',
 		},
+		likes: [{ type: Schema.Types.ObjectId, ref: 'UserModel' }],
+		comments: [{ type: Schema.Types.ObjectId, ref: 'CommentModel' }],
 	},
 	{ timestamps: true },
 );

@@ -6,7 +6,7 @@ import 'reflect-metadata';
 import { IPost } from '../dto/post.dto';
 
 @injectable()
-export class ChatServise {
+export class PostServise {
 	async checkTitleByToken(title: string) {
 		return await PostModel.findOne({
 			slug: slugify(title),

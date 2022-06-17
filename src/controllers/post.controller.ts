@@ -1,4 +1,4 @@
-import { ChatServise } from '../service/chat.service';
+import { PostServise } from '../service/post.service';
 import { Request, Response, NextFunction } from 'express';
 import { BaseController } from '../common/base.controller';
 import { injectable, inject } from 'inversify';
@@ -6,27 +6,27 @@ import { TYPES } from '../types';
 import 'reflect-metadata';
 
 @injectable()
-export class ChatController extends BaseController {
-	constructor(@inject(TYPES.ChatServise) protected chatService: ChatServise) {
+export class PostController extends BaseController {
+	constructor(@inject(TYPES.PostServise) protected postService: PostServise) {
 		super();
 		this.bindRouters([
 			{ path: '/message', methot: 'post', func: this.createPost },
 			{ path: '/update/:id', methot: 'put', func: this.editPost },
 			{ path: '/delete/:id', methot: 'delete', func: this.deletePost },
-			{ path: '/posts', methot: 'get', func: this.getAllPosts },
+			{ path: '/all', methot: 'get', func: this.getAllPosts },
 		]);
 	}
 
 	async createPost(req: Request, res: Response, next: NextFunction) {
 		try {
 			const { title } = req.body;
-			const alreadyExist = await this.chatService.checkTitleByToken(title);
+			const alreadyExist = await this.postService.checkTitleByToken(title);
 
 			if (alreadyExist) {
 				return this.send(res, 400, 'Title is taken');
 			}
 
-			const result = await this.chatService.createNewPost(req.body, req.user._id);
+			const result = await this.postService.createNewPost(req.body, req.user._id);
 			return this.ok(res, result);
 		} catch (err) {
 			console.log(err);
@@ -38,7 +38,7 @@ export class ChatController extends BaseController {
 		try {
 			const postId = req.params.id;
 
-			const result = await this.chatService.updatePost(req.body, postId);
+			const result = await this.postService.updatePost(req.body, postId);
 			return this.ok(res, result);
 		} catch (err) {
 			console.log(err);
@@ -49,7 +49,7 @@ export class ChatController extends BaseController {
 	async deletePost(req: Request, res: Response, next: NextFunction) {
 		try {
 			const { id } = req.params;
-			await this.chatService.removePost(id, req.user._id);
+			await this.postService.removePost(id, req.user._id);
 			return res.json({ ok: true });
 		} catch (err) {
 			console.log(err);
@@ -58,7 +58,7 @@ export class ChatController extends BaseController {
 	}
 
 	async getAllPosts(req: Request, res: Response, next: NextFunction) {
-		const result = await this.chatService.getAllPost();
+		const result = await this.postService.getAllPost();
 		res.json(result);
 	}
 }
