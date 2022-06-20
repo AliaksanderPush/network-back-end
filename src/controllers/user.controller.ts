@@ -113,10 +113,14 @@ export class UserController extends BaseController {
 		}
 	}
 
-	fileLoader(req: Request, res: Response, next: NextFunction) {
-		const token = req.headers.authorization!.split(' ')[1];
-		const upload = multer(storageConfig).single('filedata');
+	async fileLoader(req: Request, res: Response, next: NextFunction) {
+		try {
+			const deleteOldAvatar = await this.userService.removeOldAvatar(req.user._id);
+		} catch (err) {
+			return res.status(400).send(' Avatar was not found!');
+		}
 
+		const upload = multer(storageConfig).single('filedata');
 		upload(req, res, async (err) => {
 			if (err instanceof multer.MulterError) {
 				console.log(err);
@@ -125,8 +129,7 @@ export class UserController extends BaseController {
 				console.log(err);
 				res.status(400).send(' При загрузке произошла неизвестная ошибка.');
 			} else {
-				console.log('weer>>', req.file?.filename);
-				await this.userService.upDateAvatar(token, req.file?.filename as string);
+				await this.userService.upDateAvatar(req.user._id, req.file?.filename as string);
 				return this.send(res, 200, req.file?.filename);
 			}
 		});

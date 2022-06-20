@@ -123,11 +123,12 @@ export class AuthController extends BaseController {
 		try {
 			if (req.headers.authorization) {
 				const refreshToken = req.headers.authorization.split(' ')[1];
-
+				console.log('prishlo v logout', refreshToken);
 				if (!refreshToken) {
 					return this.send(res, 401, 'Refresh token not found');
 				}
 				const token = await this.userService.logout(refreshToken);
+				console.log('delete token', token);
 				return this.ok(res, { token });
 			}
 		} catch (e) {

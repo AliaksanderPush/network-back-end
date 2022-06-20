@@ -13,7 +13,7 @@ const postSchema = new Schema(
 			lowercase: true,
 		},
 		content: {},
-		featuredImage: { type: Schema.Types.ObjectId, ref: 'MediaModel' },
+		featuredImage: { type: String },
 		published: {
 			type: Boolean,
 			default: true,

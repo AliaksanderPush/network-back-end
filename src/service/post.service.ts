@@ -4,6 +4,7 @@ import { PostModel } from '../model/posts.model';
 import slugify from 'slugify';
 import 'reflect-metadata';
 import { IPost } from '../dto/post.dto';
+import { MediaModel } from '../model/media.model';
 
 @injectable()
 export class PostServise {
@@ -14,8 +15,12 @@ export class PostServise {
 	}
 
 	async createNewPost(body: IPost, _id: string): Promise<IPost> {
+		const { title, content, featuredImage } = body;
+
 		const newPost = await new PostModel({
-			...body,
+			title,
+			content,
+			featuredImage: featuredImage,
 			slug: slugify(body.title),
 			postedBy: _id,
 		}).save();

@@ -10,10 +10,11 @@ import { nanoid } from 'nanoid';
 import { TYPES } from '../types';
 import { IUserResponseToClient } from '../dto/userReregistrResponse';
 import { IJwtTokens, IRefreshToken, IToken } from '../dto/token.dto';
-import { JwtPayload, verify } from 'jsonwebtoken';
+import { verify } from 'jsonwebtoken';
 import { IUserPayload } from '../dto/userPayload.dto';
 import { FriendsModel } from '../model/friends.model';
 import { IFriend } from '../dto/friends.dto';
+import fs from 'fs';
 
 @injectable()
 export class UserService {
@@ -148,11 +149,23 @@ export class UserService {
 		return await UserModel.updateOne({ email: email }, { password: hashPass });
 	}
 
-	async upDateAvatar(token: string, path: string) {
-		console.log('token>>>', token);
+	async removeOldAvatar(id: string) {
+		const oldPath = await UserModel.findById(id);
+		console.log('oldPath>>', oldPath?.avatar);
+		const fullPath = `${__dirname}/../../build/assets/${oldPath?.avatar}`;
+		fs.unlinkSync(fullPath);
+
+		return oldPath;
+	}
+
+	async upDateAvatar(id: string, path: string) {
 		console.log('pATH>>>', path);
-		const email = this.getEmailByToken(token);
-		const result = await UserModel.updateOne({ email: email }, { avatar: path });
+		const result = await UserModel.findByIdAndUpdate(
+			id,
+			{ avatar: path },
+			{ returnDocument: 'after' },
+		);
+
 		console.log('result>>>', result);
 		return result;
 	}
