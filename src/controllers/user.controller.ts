@@ -9,6 +9,7 @@ import { RoleMidleware } from '../middleWares/roles.midleware';
 import { storageConfig } from '../configs/multer.config';
 import 'reflect-metadata';
 import { UserModel } from '../model/user.model';
+import { UploadMiddleWare } from '../middleWares/upload.middleware';
 
 @injectable()
 export class UserController extends BaseController {
@@ -35,6 +36,12 @@ export class UserController extends BaseController {
 				path: '/upload',
 				methot: 'post',
 				func: this.fileLoader,
+				middlewares: [],
+			},
+			{
+				path: '/avatar',
+				methot: 'post',
+				func: this.uploadAvatar,
 				middlewares: [],
 			},
 
@@ -114,12 +121,6 @@ export class UserController extends BaseController {
 	}
 
 	async fileLoader(req: Request, res: Response, next: NextFunction) {
-		try {
-			const deleteOldAvatar = await this.userService.removeOldAvatar(req.user._id);
-		} catch (err) {
-			return res.status(400).send(' Avatar was not found!');
-		}
-
 		const upload = multer(storageConfig).single('filedata');
 		upload(req, res, async (err) => {
 			if (err instanceof multer.MulterError) {
@@ -129,10 +130,20 @@ export class UserController extends BaseController {
 				console.log(err);
 				res.status(400).send(' При загрузке произошла неизвестная ошибка.');
 			} else {
-				await this.userService.upDateAvatar(req.user._id, req.file?.filename as string);
-				return this.send(res, 200, req.file?.filename);
+				this.ok(res, req.file?.filename);
+				return;
 			}
 		});
+	}
+
+	async uploadAvatar(req: Request, res: Response, next: NextFunction) {
+		try {
+			await this.userService.removeOldAvatar(req.user._id);
+			const result = await this.userService.upDateAvatar(req.user._id, req.body.path);
+			return this.send(res, 200, result);
+		} catch (err) {
+			this.send(res, 400, 'Avatar was not created!');
+		}
 	}
 
 	async addFriends(req: Request, res: Response, next: NextFunction) {

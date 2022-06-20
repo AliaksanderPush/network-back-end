@@ -151,7 +151,9 @@ export class UserService {
 
 	async removeOldAvatar(id: string) {
 		const oldPath = await UserModel.findById(id);
-		console.log('oldPath>>', oldPath?.avatar);
+		if (!oldPath?.avatar) {
+			return true;
+		}
 		const fullPath = `${__dirname}/../../build/assets/${oldPath?.avatar}`;
 		fs.unlinkSync(fullPath);
 
@@ -159,15 +161,13 @@ export class UserService {
 	}
 
 	async upDateAvatar(id: string, path: string) {
-		console.log('pATH>>>', path);
 		const result = await UserModel.findByIdAndUpdate(
 			id,
 			{ avatar: path },
 			{ returnDocument: 'after' },
 		);
 
-		console.log('result>>>', result);
-		return result;
+		return result?.avatar;
 	}
 
 	async addNewFriends(body: IFriend, userId: string, _id: string): Promise<IFriend> {
