@@ -37,7 +37,10 @@ export class PostController extends BaseController {
 	async editPost(req: Request, res: Response, next: NextFunction) {
 		try {
 			const postId = req.params.id;
-
+			const { imgFormData } = req.body;
+			if (imgFormData) {
+				await this.postService.removeOldImage(postId);
+			}
 			const result = await this.postService.updatePost(req.body, postId);
 			return this.ok(res, result);
 		} catch (err) {
@@ -49,8 +52,8 @@ export class PostController extends BaseController {
 	async deletePost(req: Request, res: Response, next: NextFunction) {
 		try {
 			const { id } = req.params;
-			await this.postService.removePost(id, req.user._id);
-			return res.json({ ok: true });
+			const result = await this.postService.removePost(id, req.user._id);
+			return this.ok(res, result);
 		} catch (err) {
 			console.log(err);
 			res.sendStatus(400);

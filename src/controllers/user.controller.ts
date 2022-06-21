@@ -101,6 +101,7 @@ export class UserController extends BaseController {
 	}
 
 	async refresh(req: Request, res: Response, next: NextFunction) {
+		console.log('popali>>');
 		if (req.headers.authorization && req.user) {
 			const refreshToken = req.headers.authorization.split(' ')[1];
 			const getRefresh = await this.userService.refresh(refreshToken);

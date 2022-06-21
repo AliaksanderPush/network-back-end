@@ -4,7 +4,7 @@ import { PostModel } from '../model/posts.model';
 import slugify from 'slugify';
 import 'reflect-metadata';
 import { IPost } from '../dto/post.dto';
-import { MediaModel } from '../model/media.model';
+import fs from 'fs';
 
 @injectable()
 export class PostServise {
@@ -53,8 +53,9 @@ export class PostServise {
 	}
 
 	async removePost(postId: string, _id: string) {
-		await PostModel.findByIdAndDelete(postId);
+		const res = await PostModel.findByIdAndDelete(postId);
 		await UserModel.findByIdAndUpdate(_id, { $pull: { posts: postId } });
+		return res;
 	}
 
 	async getAllPost(): Promise<IPost[]> {
@@ -69,11 +70,15 @@ export class PostServise {
 			return Promise.reject(err);
 		}
 	}
-}
 
-/*
-.populate({
-					path: 'postedBy',
-					populate: { path: 'posts' },
-				})
-				*/
+	async removeOldImage(postId: string) {
+		const oldPath = await PostModel.findById(postId);
+		if (oldPath?.featuredImage) {
+			const fullPath = `${__dirname}/../../build/assets/${oldPath?.featuredImage}`;
+			fs.unlinkSync(fullPath);
+			return oldPath;
+		}
+
+		return;
+	}
+}
