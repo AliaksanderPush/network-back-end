@@ -28,8 +28,9 @@ export class PostServise {
 		await UserModel.findByIdAndUpdate(_id, {
 			$addToSet: { posts: newPost._id },
 		});
-
-		return newPost;
+		return newPost.populate({
+			path: 'postedBy',
+		});
 	}
 
 	async updatePost(body: IPost, postId: string): Promise<IPost | null> {
@@ -45,9 +46,9 @@ export class PostServise {
 			{
 				new: true,
 			},
-		)
-			.populate('postedBy', '_id name')
-			.populate('featuredImage', '_id url');
+		).populate({
+			path: 'postedBy',
+		});
 
 		return upPost;
 	}

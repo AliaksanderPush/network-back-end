@@ -151,13 +151,13 @@ export class UserService {
 
 	async removeOldAvatar(id: string) {
 		const oldPath = await UserModel.findById(id);
-		if (!oldPath?.avatar) {
-			return true;
+		console.log('oldAvatar>>>', oldPath);
+		if (oldPath?.avatar) {
+			const fullPath = `${__dirname}/../../build/assets/${oldPath?.avatar}`;
+			fs.unlinkSync(fullPath);
+			return oldPath;
 		}
-		const fullPath = `${__dirname}/../../build/assets/${oldPath?.avatar}`;
-		fs.unlinkSync(fullPath);
-
-		return oldPath;
+		return;
 	}
 
 	async upDateAvatar(id: string, path: string) {

@@ -14,8 +14,14 @@ export class CommitsServise {
 			postId,
 			postedBy: _id,
 		}).save();
-		created = await created.populate('postedBy', '_id name');
-		return created;
+
+		await PostModel.findByIdAndUpdate(postId, {
+			$addToSet: { comments: created._id },
+		});
+
+		return (created = await created.populate({
+			path: 'postedBy',
+		}));
 	}
 
 	async updateCommit(content: string, commentId: string): Promise<IComment | null> {
@@ -29,7 +35,11 @@ export class CommitsServise {
 
 	async getAllCommits(): Promise<IComment[]> {
 		try {
-			return await CommentModel.find();
+			return await CommentModel.find()
+				.populate({
+					path: 'postedBy',
+				})
+				.sort({ createdAt: +1 });
 		} catch (err) {
 			return Promise.reject(err);
 		}

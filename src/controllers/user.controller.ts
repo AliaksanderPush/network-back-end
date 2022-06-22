@@ -2,14 +2,11 @@ import { UserService } from './../service/user.service';
 import { Request, Response, NextFunction } from 'express';
 import { BaseController } from '../common/base.controller';
 import { injectable, inject } from 'inversify';
-import { IFriend } from '../dto/friends.dto';
 import { TYPES } from '../types';
 import multer from 'multer';
 import { RoleMidleware } from '../middleWares/roles.midleware';
 import { storageConfig } from '../configs/multer.config';
 import 'reflect-metadata';
-import { UserModel } from '../model/user.model';
-import { UploadMiddleWare } from '../middleWares/upload.middleware';
 
 @injectable()
 export class UserController extends BaseController {
@@ -138,6 +135,7 @@ export class UserController extends BaseController {
 	}
 
 	async uploadAvatar(req: Request, res: Response, next: NextFunction) {
+		console.log('server ok');
 		try {
 			await this.userService.removeOldAvatar(req.user._id);
 			const result = await this.userService.upDateAvatar(req.user._id, req.body.path);
