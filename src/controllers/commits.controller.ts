@@ -45,8 +45,8 @@ export class CommitsController extends BaseController {
 	async deleteCommit(req: Request, res: Response, next: NextFunction) {
 		try {
 			const { id } = req.params;
-			await this.commitsServise.removeCommit(id);
-			return res.json({ ok: true });
+			const result = await this.commitsServise.removeCommit(id);
+			return this.ok(res, result);
 		} catch (err) {
 			console.log(err);
 			this.send(res, 400, 'Commit was not deleted!');

@@ -25,7 +25,13 @@ export class CommitsServise {
 	}
 
 	async updateCommit(content: string, commentId: string): Promise<IComment | null> {
-		const updated = await CommentModel.findByIdAndUpdate(commentId, { content }, { new: true });
+		const updated = await CommentModel.findByIdAndUpdate(
+			commentId,
+			{ content },
+			{ new: true },
+		).populate({
+			path: 'postedBy',
+		});
 		return updated;
 	}
 
