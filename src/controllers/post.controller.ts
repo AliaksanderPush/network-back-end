@@ -13,6 +13,9 @@ export class PostController extends BaseController {
 			{ path: '/message', methot: 'post', func: this.createPost },
 			{ path: '/update/:id', methot: 'put', func: this.editPost },
 			{ path: '/delete/:id', methot: 'delete', func: this.deletePost },
+			{ path: '/view-count/:id', methot: 'put', func: this.view },
+			{ path: '/like', methot: 'put', func: this.like },
+			{ path: '/unlike', methot: 'put', func: this.unLike },
 			{ path: '/all', methot: 'get', func: this.getAllPosts },
 		]);
 	}
@@ -63,5 +66,39 @@ export class PostController extends BaseController {
 	async getAllPosts(req: Request, res: Response, next: NextFunction) {
 		const result = await this.postService.getAllPost();
 		res.json(result);
+	}
+
+	async like(req: Request, res: Response, next: NextFunction) {
+		console.log('prishlo>>', req.params.id);
+		try {
+			const result = await this.postService.likePost(req.body.id, req.user._id);
+			console.log('res>>', result);
+			return this.ok(res, result);
+		} catch (err) {
+			console.log(err);
+			res.sendStatus(400);
+		}
+	}
+	async unLike(req: Request, res: Response, next: NextFunction) {
+		console.log('prishlo>>', req.params.id);
+		try {
+			const result = await this.postService.unLikePost(req.body.id, req.user._id);
+			console.log('res>>', result);
+			return this.ok(res, result);
+		} catch (err) {
+			console.log(err);
+			res.sendStatus(400);
+		}
+	}
+
+	async view(req: Request, res: Response, next: NextFunction) {
+		try {
+			const result = await this.postService.viewCount(req.params.id);
+
+			return this.ok(res, result);
+		} catch (err) {
+			console.log(err);
+			res.sendStatus(400);
+		}
 	}
 }

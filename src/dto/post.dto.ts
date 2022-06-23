@@ -10,6 +10,7 @@ export interface IPost extends Document {
 	published?: boolean;
 	postedBy: IUsers;
 	likes: IUsers[];
+	views: number;
 	comments: IComment[];
 	timestamps: Date;
 }

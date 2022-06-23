@@ -53,7 +53,7 @@ export class PostServise {
 		return upPost;
 	}
 
-	async removePost(postId: string, _id: string) {
+	async removePost(postId: string, _id: string): Promise<IPost | null> {
 		const res = await PostModel.findByIdAndDelete(postId);
 		await UserModel.findByIdAndUpdate(_id, { $pull: { posts: postId } });
 		return res;
@@ -72,7 +72,7 @@ export class PostServise {
 		}
 	}
 
-	async removeOldImage(postId: string) {
+	async removeOldImage(postId: string): Promise<IPost | undefined> {
 		const oldPath = await PostModel.findById(postId);
 		if (oldPath?.featuredImage) {
 			const fullPath = `${__dirname}/../../build/assets/${oldPath?.featuredImage}`;
@@ -81,5 +81,38 @@ export class PostServise {
 		}
 
 		return;
+	}
+
+	async likePost(linkId: string, id: string) {
+		const link = await PostModel.findByIdAndUpdate(
+			linkId,
+			{
+				$addToSet: { likes: id },
+			},
+			{ new: true },
+		);
+		return link;
+	}
+
+	async unLikePost(linkId: string, id: string) {
+		const link = await PostModel.findByIdAndUpdate(
+			linkId,
+			{
+				$pull: { likes: id },
+			},
+			{ new: true },
+		);
+		return link;
+	}
+
+	async viewCount(linkId: string) {
+		const link = await PostModel.findByIdAndUpdate(
+			linkId,
+			{
+				$inc: { views: 1 },
+			},
+			{ new: true },
+		);
+		return link;
 	}
 }

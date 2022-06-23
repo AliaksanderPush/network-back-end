@@ -24,19 +24,10 @@ export class CommitsServise {
 		}));
 	}
 
-	async updateCommit(content: string, commentId: string): Promise<IComment | null> {
-		const updated = await CommentModel.findByIdAndUpdate(
-			commentId,
-			{ content },
-			{ new: true },
-		).populate({
-			path: 'postedBy',
-		});
-		return updated;
-	}
-
-	async removeCommit(commentId: string) {
-		return await CommentModel.findByIdAndDelete(commentId);
+	async removeCommit(commentId: string, postId: string) {
+		const commit = await CommentModel.findByIdAndDelete(commentId);
+		await PostModel.findByIdAndUpdate(postId, { $pull: { comments: commentId } });
+		return commit;
 	}
 
 	async getAllCommits(): Promise<IComment[]> {
@@ -45,13 +36,9 @@ export class CommitsServise {
 				.populate({
 					path: 'postedBy',
 				})
-				.sort({ createdAt: +1 });
+				.sort({ createdAt: -1 });
 		} catch (err) {
 			return Promise.reject(err);
 		}
-	}
-
-	async countCommits(): Promise<number> {
-		return await CommentModel.countDocuments();
 	}
 }
