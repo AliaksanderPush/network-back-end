@@ -7,13 +7,19 @@ export const storageConfig = {
 	storage: multer.diskStorage({
 		destination: (request, file, callback) => {
 			callback(null, resolve(__dirname, '..', 'assets'));
-			//callback(null, resolve(__dirname, '..', '..', '..', 'client/assets/users'));
 		},
 		filename: (req, file, cb) => {
 			const hash = uuidv4();
+			console.log('fille>>>', file);
 			let extArray = file.mimetype.split('/');
 			let extension = extArray[extArray.length - 1];
-			cb(null, hash + '.' + extension);
+			if (extension === 'quicktime') {
+				cb(null, hash + '.' + 'mov');
+			} else if (extension === 'x-mp4v') {
+				cb(null, hash + '.' + 'mp4');
+			} else {
+				cb(null, hash + '.' + 'mp4');
+			}
 		},
 	}),
 
@@ -21,12 +27,20 @@ export const storageConfig = {
 		fileSize: 5 * 1024 * 1024, // 5MB
 	},
 	fileFilter: (request, file, callback) => {
-		const formats = ['image/jpeg', 'image/jpg', 'image/png', 'image/svg'];
+		const formats = [
+			'image/jpeg',
+			'image/jpg',
+			'image/png',
+			'image/svg',
+			'video/mov',
+			'video/mp4',
+		];
 
 		if (formats.includes(file.mimetype)) {
 			callback(null, true);
 		} else {
-			callback(new Error('Такой формат не поддерживается'));
+			//callback(new Error('Такой формат не поддерживается'));
+			callback(null, true);
 		}
 	},
 } as Options;
