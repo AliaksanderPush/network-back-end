@@ -10,37 +10,27 @@ export const storageConfig = {
 		},
 		filename: (req, file, cb) => {
 			const hash = uuidv4();
-			console.log('fille>>>', file);
 			let extArray = file.mimetype.split('/');
 			let extension = extArray[extArray.length - 1];
 			if (extension === 'quicktime') {
 				cb(null, hash + '.' + 'mov');
-			} else if (extension === 'x-mp4v') {
-				cb(null, hash + '.' + 'mp4');
-			} else {
+			}
+			if (extension === 'x-mp4v') {
 				cb(null, hash + '.' + 'mp4');
 			}
+
+			cb(null, hash + '.' + extension);
 		},
 	}),
 
 	limits: {
 		fileSize: 5 * 1024 * 1024, // 5MB
 	},
-	fileFilter: (request, file, callback) => {
-		const formats = [
-			'image/jpeg',
-			'image/jpg',
-			'image/png',
-			'image/svg',
-			'video/mov',
-			'video/mp4',
-		];
-
-		if (formats.includes(file.mimetype)) {
-			callback(null, true);
-		} else {
-			//callback(new Error('Такой формат не поддерживается'));
-			callback(null, true);
+	fileFilter: (req, file, cb) => {
+		// allow images only
+		if (!file.originalname.match(/\.(jpg|jpeg|png|gif|mov|mp4)$/)) {
+			return cb(null, false);
 		}
+		cb(null, true);
 	},
 } as Options;

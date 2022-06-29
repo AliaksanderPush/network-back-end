@@ -9,4 +9,6 @@ export const TYPES = {
 	TokenServise: Symbol.for('TokenServise'),
 	PostServise: Symbol.for('PostServise'),
 	CommitsServise: Symbol.for('CommitsServise'),
+	FriendsController: Symbol.for('FriendsController'),
+	FriendsServise: Symbol.for('FriendsServise'),
 };

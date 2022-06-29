@@ -69,10 +69,8 @@ export class PostController extends BaseController {
 	}
 
 	async like(req: Request, res: Response, next: NextFunction) {
-		console.log('prishlo>>', req.params.id);
 		try {
 			const result = await this.postService.likePost(req.body.id, req.user._id);
-			console.log('res>>', result);
 			return this.ok(res, result);
 		} catch (err) {
 			console.log(err);
@@ -80,10 +78,8 @@ export class PostController extends BaseController {
 		}
 	}
 	async unLike(req: Request, res: Response, next: NextFunction) {
-		console.log('prishlo>>', req.params.id);
 		try {
 			const result = await this.postService.unLikePost(req.body.id, req.user._id);
-			console.log('res>>', result);
 			return this.ok(res, result);
 		} catch (err) {
 			console.log(err);

@@ -8,6 +8,9 @@ import 'reflect-metadata';
 import { TYPES } from './types';
 import { AuthMiddleWare } from './middleWares/auth.middleware';
 import { CommitsController } from './controllers/commits.controller';
+import { FriendsController } from './controllers/friends.controller';
+import { createServer } from 'http';
+import socket from 'socket.io';
 import cors from 'cors';
 
 @injectable()
@@ -15,14 +18,26 @@ export class App {
 	app: Express;
 	port: number | string;
 	server: Server;
+	http: Server;
+	io: socket.Server;
 	constructor(
 		@inject(TYPES.UserController) private userController: UserController,
 		@inject(TYPES.AuthController) private authController: AuthController,
 		@inject(TYPES.PostController) private postController: PostController,
 		@inject(TYPES.CommitsController) private commitsController: CommitsController,
+		@inject(TYPES.FriendsController) private friendsController: FriendsController,
 	) {
 		this.app = express();
 		this.port = process.env.PORT || 4000;
+		this.http = createServer(this.app);
+		this.io = require('socket.io')(this.http, {
+			path: '/socket.io',
+			cors: {
+				origin: [`192.168.1.150:${this.port}`],
+				methods: ['GET', 'POST'],
+				allowedHeaders: ['content-type'],
+			},
+		});
 	}
 
 	useMidleWare() {
@@ -38,14 +53,15 @@ export class App {
 		this.app.use('/commit', this.commitsController.router);
 		this.app.use('/auth', this.authController.router);
 		this.app.use('/posts', this.postController.router);
+		this.app.use('/friend', this.friendsController.router);
 		this.app.use('/', this.userController.router);
 	}
 
 	public async init(): Promise<void> {
 		this.useMidleWare();
 		this.useRouters();
-		this.server = this.app.listen(4000, '192.168.0.104', () => {
-			console.log(`🚀 Server ready at 192.168.0.104:${this.port}`);
+		this.server = this.app.listen(4000, '192.168.1.150', () => {
+			console.log(`🚀 Server ready at 192.168.1.150:${this.port}`);
 		});
 	}
 }

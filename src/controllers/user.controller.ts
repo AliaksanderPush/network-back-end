@@ -48,18 +48,6 @@ export class UserController extends BaseController {
 				func: this.refresh,
 				middlewares: [],
 			},
-			{
-				path: '/friends/:id',
-				methot: 'post',
-				func: this.addFriends,
-				middlewares: [],
-			},
-			{
-				path: '/getFriends',
-				methot: 'get',
-				func: this.getFriendsByName,
-				middlewares: [],
-			},
 		]);
 	}
 
@@ -98,7 +86,6 @@ export class UserController extends BaseController {
 	}
 
 	async refresh(req: Request, res: Response, next: NextFunction) {
-		console.log('popali>>');
 		if (req.headers.authorization && req.user) {
 			const refreshToken = req.headers.authorization.split(' ')[1];
 			const getRefresh = await this.userService.refresh(refreshToken);
@@ -135,35 +122,13 @@ export class UserController extends BaseController {
 	}
 
 	async uploadAvatar(req: Request, res: Response, next: NextFunction) {
-		console.log('server ok');
+		const myId = req.user._id;
 		try {
 			await this.userService.removeOldAvatar(req.user._id);
-			const result = await this.userService.upDateAvatar(req.user._id, req.body.path);
+			const result = await this.userService.upDateAvatar(myId, req.body.path);
 			return this.send(res, 200, result);
 		} catch (err) {
 			this.send(res, 400, 'Avatar was not created!');
-		}
-	}
-
-	async addFriends(req: Request, res: Response, next: NextFunction) {
-		const { id } = req.params;
-
-		try {
-			const result = await this.userService.addNewFriends(req.body, id, req.user._id);
-			return this.ok(res, result);
-		} catch (err) {
-			console.log(err);
-			this.send(res, 400, 'Friend was not created!');
-		}
-	}
-
-	async getFriendsByName(req: Request, res: Response, next: NextFunction) {
-		try {
-			const result = await this.userService.getFriends(req.user._id);
-			return this.ok(res, result);
-		} catch (err) {
-			console.log(err);
-			this.send(res, 400, 'Friend was not get!');
 		}
 	}
 }

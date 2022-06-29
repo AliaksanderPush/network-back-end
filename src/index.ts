@@ -10,6 +10,8 @@ import { AuthController } from './controllers/auth.controller';
 import { PostController } from './controllers/post.controller';
 import { CommitsServise } from './service/commits.service';
 import { CommitsController } from './controllers/commits.controller';
+import { FriendsController } from './controllers/friends.controller';
+import { FriendsServise } from './service/friends.service';
 
 async function bootstrap() {
 	const container = new Container();
@@ -21,6 +23,12 @@ async function bootstrap() {
 	container.bind<PostController>(TYPES.PostController).to(PostController).inSingletonScope();
 	container.bind<PostServise>(TYPES.PostServise).to(PostServise).inSingletonScope();
 	container.bind<CommitsServise>(TYPES.CommitsServise).to(CommitsServise).inSingletonScope();
+	container
+		.bind<FriendsController>(TYPES.FriendsController)
+		.to(FriendsController)
+		.inSingletonScope();
+	container.bind<FriendsServise>(TYPES.FriendsServise).to(FriendsServise).inSingletonScope();
+
 	container
 		.bind<CommitsController>(TYPES.CommitsController)
 		.to(CommitsController)
