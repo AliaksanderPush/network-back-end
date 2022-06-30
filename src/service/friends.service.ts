@@ -39,11 +39,8 @@ export class FriendsServise {
 		return isMe;
 	}
 
-	async getFriends(id: string): Promise<IUsers | null> {
-		const result = await UserModel.findById(id).populate({
-			path: 'contacts',
-			populate: { path: 'userId' },
-		});
+	async getFriends(id: string): Promise<IFriend[] | null> {
+		const result = await FriendsModel.find({ friendId: id }).populate(['friendId', 'messages']);
 
 		return result;
 	}
@@ -63,6 +60,6 @@ export class FriendsServise {
 	}
 
 	async seachFriends(userId: string): Promise<IFriend | null> {
-		return FriendsModel.findOne({ user: userId });
+		return FriendsModel.findOne({ friendId: userId });
 	}
 }

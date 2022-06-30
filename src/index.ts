@@ -12,6 +12,8 @@ import { CommitsServise } from './service/commits.service';
 import { CommitsController } from './controllers/commits.controller';
 import { FriendsController } from './controllers/friends.controller';
 import { FriendsServise } from './service/friends.service';
+import { MessagesServise } from './service/messages.service';
+import { MessagesController } from './controllers/messages.controller';
 
 async function bootstrap() {
 	const container = new Container();
@@ -32,6 +34,11 @@ async function bootstrap() {
 	container
 		.bind<CommitsController>(TYPES.CommitsController)
 		.to(CommitsController)
+		.inSingletonScope();
+	container.bind<MessagesServise>(TYPES.MessagesServise).to(MessagesServise).inSingletonScope();
+	container
+		.bind<MessagesController>(TYPES.MessagesController)
+		.to(MessagesController)
 		.inSingletonScope();
 
 	const app = container.get<App>(TYPES.App);

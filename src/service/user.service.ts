@@ -12,8 +12,6 @@ import { IUserResponseToClient } from '../dto/userReregistrResponse';
 import { IJwtTokens, IRefreshToken, IToken } from '../dto/token.dto';
 import { verify } from 'jsonwebtoken';
 import { IUserPayload } from '../dto/userPayload.dto';
-import { FriendsModel } from '../model/friends.model';
-import { IFriend } from '../dto/friends.dto';
 import fs from 'fs';
 
 @injectable()

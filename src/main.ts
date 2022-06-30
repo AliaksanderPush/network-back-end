@@ -12,6 +12,7 @@ import { FriendsController } from './controllers/friends.controller';
 import { createServer } from 'http';
 import socket from 'socket.io';
 import cors from 'cors';
+import { MessagesController } from './controllers/messages.controller';
 
 @injectable()
 export class App {
@@ -26,6 +27,7 @@ export class App {
 		@inject(TYPES.PostController) private postController: PostController,
 		@inject(TYPES.CommitsController) private commitsController: CommitsController,
 		@inject(TYPES.FriendsController) private friendsController: FriendsController,
+		@inject(TYPES.MessagesController) private messagesController: MessagesController,
 	) {
 		this.app = express();
 		this.port = process.env.PORT || 4000;
@@ -54,6 +56,7 @@ export class App {
 		this.app.use('/auth', this.authController.router);
 		this.app.use('/posts', this.postController.router);
 		this.app.use('/friend', this.friendsController.router);
+		this.app.use('/message', this.messagesController.router);
 		this.app.use('/', this.userController.router);
 	}
 
