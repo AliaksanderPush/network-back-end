@@ -52,9 +52,9 @@ export class MessagesController extends BaseController {
 	async addMessage(req: Request, res: Response, next: NextFunction) {
 		const { id } = req.params;
 		const userId = req.user._id;
-		const { content, image } = req.body;
+		const { content } = req.body;
 		try {
-			const result = await this.messagesServise.addNewMessage(userId, id, content, image);
+			const result = await this.messagesServise.addNewMessage(userId, id, content);
 			return this.ok(res, result);
 		} catch (err) {
 			console.log(err);

@@ -40,8 +40,18 @@ export class FriendsServise {
 	}
 
 	async getFriends(id: string): Promise<IFriend[] | null> {
-		const result = await FriendsModel.find({ friendId: id }).populate(['friendId', 'messages']);
-
+		const myFriemds = await FriendsModel.find({ myId: id }).populate([
+			'friendId',
+			'myId',
+			'messages',
+		]);
+		const IamInFriemds = await FriendsModel.find({ friendId: id }).populate([
+			'friendId',
+			'myId',
+			'messages',
+		]);
+		const result = myFriemds.concat(IamInFriemds);
+		console.log('result>>>', result);
 		return result;
 	}
 

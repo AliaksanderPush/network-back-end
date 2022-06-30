@@ -15,16 +15,11 @@ export class MessagesServise {
 			.sort({ createdAt: -1 });
 	}
 
-	async addNewMessage(
-		userId: string,
-		friendRoomId: string,
-		content: string,
-		image: string,
-	): Promise<IMessage> {
+	async addNewMessage(userId: string, friendRoomId: string, content: string): Promise<IMessage> {
 		const newMessage = await new MessageModel({
 			text: content,
 			user: userId,
-			attachments: image,
+			attachments: '',
 			friendBy: friendRoomId,
 		}).save();
 
