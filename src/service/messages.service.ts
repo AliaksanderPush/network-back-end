@@ -15,11 +15,16 @@ export class MessagesServise {
 			.sort({ createdAt: -1 });
 	}
 
-	async addNewMessage(userId: string, friendRoomId: string, content: string): Promise<IMessage> {
+	async addNewMessage(
+		userId: string,
+		friendRoomId: string,
+		content: string,
+		image: string,
+	): Promise<IMessage> {
 		const newMessage = await new MessageModel({
 			text: content,
 			user: userId,
-			attachments: '',
+			attachments: image,
 			friendBy: friendRoomId,
 		}).save();
 
@@ -32,7 +37,11 @@ export class MessagesServise {
 
 	async deleteMessage(id: string, friendRoomId: string): Promise<IMessage | null> {
 		const message = await MessageModel.findByIdAndDelete(id);
-		await FriendsModel.findByIdAndUpdate(friendRoomId, { $pull: { messages: id } });
+		await FriendsModel.findByIdAndUpdate(
+			friendRoomId,
+			{ $pull: { messages: id } },
+			{ new: true },
+		);
 		return message;
 	}
 

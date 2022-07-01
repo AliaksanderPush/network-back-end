@@ -18,19 +18,8 @@ export const storageConfig = {
 			if (extension === 'x-mp4v') {
 				cb(null, hash + '.' + 'mp4');
 			}
-
+			console.log('config>>', hash + '.' + extension);
 			cb(null, hash + '.' + extension);
 		},
 	}),
-
-	limits: {
-		fileSize: 5 * 1024 * 1024, // 5MB
-	},
-	fileFilter: (req, file, cb) => {
-		// allow images only
-		if (!file.originalname.match(/\.(jpg|jpeg|png|gif|mov|mp4)$/)) {
-			return cb(null, false);
-		}
-		cb(null, true);
-	},
 } as Options;

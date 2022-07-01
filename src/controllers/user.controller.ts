@@ -115,6 +115,7 @@ export class UserController extends BaseController {
 				console.log(err);
 				res.status(400).send(' При загрузке произошла неизвестная ошибка.');
 			} else {
+				console.log('multer>>>', req.file?.filename);
 				this.ok(res, req.file?.filename);
 				return;
 			}

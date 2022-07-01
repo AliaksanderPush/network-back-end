@@ -14,6 +14,7 @@ const UserShema: Schema = new Schema({
 	contacts: [{ type: Schema.Types.ObjectId, ref: 'FriendsModel' }],
 	image: { type: Schema.Types.ObjectId, ref: 'MediaModel' },
 	posts: [{ type: Schema.Types.ObjectId, ref: 'PostModel' }],
+	last_seen: { type: Date, default: new Date() },
 	created_at: { type: Date, default: Date.now },
 });
 

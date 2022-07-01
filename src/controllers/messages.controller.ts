@@ -52,9 +52,9 @@ export class MessagesController extends BaseController {
 	async addMessage(req: Request, res: Response, next: NextFunction) {
 		const { id } = req.params;
 		const userId = req.user._id;
-		const { content } = req.body;
+		const { content, image } = req.body;
 		try {
-			const result = await this.messagesServise.addNewMessage(userId, id, content);
+			const result = await this.messagesServise.addNewMessage(userId, id, content, image);
 			return this.ok(res, result);
 		} catch (err) {
 			console.log(err);
@@ -79,7 +79,6 @@ export class MessagesController extends BaseController {
 		const { friendRoomId } = req.body;
 		try {
 			const result = await this.messagesServise.deleteMessage(id, friendRoomId);
-			console.log('result>>>', result);
 			return this.ok(res, result);
 		} catch (err) {
 			console.log(err);

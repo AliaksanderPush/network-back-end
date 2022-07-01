@@ -13,6 +13,7 @@ import { createServer } from 'http';
 import socket from 'socket.io';
 import cors from 'cors';
 import { MessagesController } from './controllers/messages.controller';
+import { LastSeenUpdate } from './middleWares/lastSeen.middleware';
 
 @injectable()
 export class App {
@@ -48,6 +49,8 @@ export class App {
 		this.app.use(express.static(`${__dirname}\\assets`));
 		const authMiddleWare = new AuthMiddleWare();
 		this.app.use(authMiddleWare.execute.bind(authMiddleWare));
+		const lastSeeenMiddleware = new LastSeenUpdate();
+		this.app.use(lastSeeenMiddleware.execute.bind(lastSeeenMiddleware));
 		this.app.use(cors());
 	}
 
@@ -63,7 +66,7 @@ export class App {
 	public async init(): Promise<void> {
 		this.useMidleWare();
 		this.useRouters();
-		this.server = this.app.listen(4000, '192.168.0.104', () => {
+		this.server = this.app.listen(4000, '192.168.1.150', () => {
 			console.log(`🚀 Server ready at 192.168.1.150:${this.port}`);
 		});
 	}
