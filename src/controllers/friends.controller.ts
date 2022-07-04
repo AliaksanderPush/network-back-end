@@ -34,12 +34,9 @@ export class FriendsController extends BaseController {
 	async addFriends(req: Request, res: Response, next: NextFunction) {
 		const { id } = req.params;
 		const myId = req.user._id;
-		const isFriends = await this.friendsServise.seachFriends(id);
-		if (isFriends) {
-			return this.send(res, 400, 'The friend has been alredy!!');
-		}
 		try {
 			const result = await this.friendsServise.addNewFriends(id, myId);
+			console.log('result>>>', result);
 			return this.ok(res, result);
 		} catch (err) {
 			console.log(err);
@@ -51,7 +48,6 @@ export class FriendsController extends BaseController {
 		const myId = req.user._id;
 		try {
 			const result = await this.friendsServise.getFriends(myId);
-			console.log('result>>>', result);
 			return this.ok(res, result);
 		} catch (err) {
 			console.log(err);

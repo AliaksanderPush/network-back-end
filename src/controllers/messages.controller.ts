@@ -5,6 +5,7 @@ import { TYPES } from '../types';
 import { FriendsServise } from '../service/friends.service';
 import 'reflect-metadata';
 import { MessagesServise } from '../service/messages.service';
+import { App } from '../main';
 
 @injectable()
 export class MessagesController extends BaseController {

@@ -1,6 +1,7 @@
 import { Router, Response } from 'express';
 import { injectable } from 'inversify';
 import { IControllerRoute } from './router.interface';
+import socket, { Server } from 'socket.io';
 import 'reflect-metadata';
 
 @injectable()

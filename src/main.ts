@@ -1,5 +1,6 @@
 import express, { Express } from 'express';
-import { Server } from 'http';
+import { Server } from 'socket.io';
+import socket from 'socket.io';
 import { inject, injectable } from 'inversify';
 import { UserController } from './controllers/user.controller';
 import { AuthController } from './controllers/auth.controller';
@@ -9,19 +10,20 @@ import { TYPES } from './types';
 import { AuthMiddleWare } from './middleWares/auth.middleware';
 import { CommitsController } from './controllers/commits.controller';
 import { FriendsController } from './controllers/friends.controller';
-import { createServer } from 'http';
-import socket from 'socket.io';
 import cors from 'cors';
 import { MessagesController } from './controllers/messages.controller';
 import { LastSeenUpdate } from './middleWares/lastSeen.middleware';
+import { createServer } from 'http';
+import http from 'http';
+import { sockets } from './socket';
 
 @injectable()
 export class App {
 	app: Express;
 	port: number | string;
-	server: Server;
-	http: Server;
+	httpServer: http.Server;
 	io: socket.Server;
+
 	constructor(
 		@inject(TYPES.UserController) private userController: UserController,
 		@inject(TYPES.AuthController) private authController: AuthController,
@@ -32,15 +34,8 @@ export class App {
 	) {
 		this.app = express();
 		this.port = process.env.PORT || 4000;
-		this.http = createServer(this.app);
-		this.io = require('socket.io')(this.http, {
-			path: '/socket.io',
-			cors: {
-				origin: [`192.168.1.150:${this.port}`],
-				methods: ['GET', 'POST'],
-				allowedHeaders: ['content-type'],
-			},
-		});
+		this.httpServer = createServer(this.app);
+		this.io = new Server(this.httpServer);
 	}
 
 	useMidleWare() {
@@ -66,7 +61,7 @@ export class App {
 	public async init(): Promise<void> {
 		this.useMidleWare();
 		this.useRouters();
-		this.server = this.app.listen(4000, '192.168.1.150', () => {
+		this.httpServer.listen(4000, '192.168.0.107', () => {
 			console.log(`🚀 Server ready at 192.168.1.150:${this.port}`);
 		});
 	}

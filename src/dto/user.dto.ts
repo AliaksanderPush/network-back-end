@@ -10,5 +10,4 @@ export interface IUsers extends Document {
 	gender: string;
 	avatar?: string;
 	roles?: string[];
-	contacts?: string[];
 }

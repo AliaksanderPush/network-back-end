@@ -1,14 +1,12 @@
 import { injectable } from 'inversify';
-import { UserModel } from '../model/user.model';
 import 'reflect-metadata';
 import { FriendsModel } from '../model/friends.model';
-import { IUsers } from '../dto/user.dto';
 import { IFriend } from '../dto/friends.dto';
 import { MessageModel } from '../model/message.model';
 
 @injectable()
 export class FriendsServise {
-	async addNewFriends(userId: string, _id: string): Promise<IUsers | null> {
+	async addNewFriends(userId: string, _id: string): Promise<IFriend | null> {
 		const newMessage = await new MessageModel({
 			text: 'Hi!',
 			user: _id,
@@ -16,8 +14,7 @@ export class FriendsServise {
 		}).save();
 
 		const newFriends = await new FriendsModel({
-			friendId: userId,
-			myId: _id,
+			friends: [_id, userId],
 			messages: [newMessage._id],
 		}).save();
 
@@ -25,51 +22,19 @@ export class FriendsServise {
 			friendBy: newFriends._id,
 		});
 
-		const isMe = await UserModel.findByIdAndUpdate(
-			_id,
-			{
-				$addToSet: { contacts: newFriends._id },
-			},
-			{ new: true },
-		);
-		await UserModel.findByIdAndUpdate(userId, {
-			$addToSet: { contacts: newFriends._id },
-		});
-
-		return isMe;
+		return newFriends;
 	}
 
 	async getFriends(id: string): Promise<IFriend[] | null> {
-		const myFriemds = await FriendsModel.find({ myId: id }).populate([
-			'friendId',
-			'myId',
-			'messages',
-		]);
-		const IamInFriemds = await FriendsModel.find({ friendId: id }).populate([
-			'friendId',
-			'myId',
-			'messages',
-		]);
-		const result = myFriemds.concat(IamInFriemds);
-		console.log('result>>>', result);
+		const result = await FriendsModel.find({
+			friends: { $in: [id] },
+		}).populate(['friends', 'messages']);
 		return result;
 	}
 
-	async deleteFriend(friendId: string, myId: string): Promise<IUsers | null> {
-		const res = await FriendsModel.findByIdAndDelete(friendId);
-		await UserModel.findByIdAndUpdate(res?.friendId, {
-			$pull: { contacts: friendId },
-		});
-		const user = await UserModel.findByIdAndUpdate(
-			myId,
-			{ $pull: { contacts: friendId } },
-			{ new: true },
-		);
+	async deleteFriend(friendId: string, myId: string): Promise<IFriend | null> {
+		const result = await FriendsModel.findByIdAndDelete(friendId);
 		await MessageModel.deleteMany({ friendBy: friendId });
-		return user;
-	}
-
-	async seachFriends(userId: string): Promise<IFriend | null> {
-		return FriendsModel.findOne({ friendId: userId });
+		return result;
 	}
 }

@@ -11,8 +11,6 @@ const UserShema: Schema = new Schema({
 	avatar: { type: String, default: '' },
 	roles: [{ type: String, ref: 'Role' }],
 	resetCode: { type: String },
-	contacts: [{ type: Schema.Types.ObjectId, ref: 'FriendsModel' }],
-	image: { type: Schema.Types.ObjectId, ref: 'MediaModel' },
 	posts: [{ type: Schema.Types.ObjectId, ref: 'PostModel' }],
 	last_seen: { type: Date, default: new Date() },
 	created_at: { type: Date, default: Date.now },
