@@ -36,7 +36,6 @@ export class FriendsController extends BaseController {
 		const myId = req.user._id;
 		try {
 			const result = await this.friendsServise.addNewFriends(id, myId);
-			console.log('result>>>', result);
 			return this.ok(res, result);
 		} catch (err) {
 			console.log(err);
@@ -60,7 +59,10 @@ export class FriendsController extends BaseController {
 		const myId = req.user._id;
 		try {
 			const result = await this.friendsServise.deleteFriend(friendsId, myId);
-			return this.ok(res, result);
+			if (result) {
+				return this.ok(res, result);
+			}
+			this.send(res, 400, 'Not found infrendly list!');
 		} catch (err) {
 			console.log(err);
 			this.send(res, 400, 'Friend was not delete!');

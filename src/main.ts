@@ -16,6 +16,7 @@ import { LastSeenUpdate } from './middleWares/lastSeen.middleware';
 import { createServer } from 'http';
 import http from 'http';
 import { sockets } from './socket';
+import { SocketController } from './controllers/socket.controller';
 
 @injectable()
 export class App {
@@ -31,6 +32,7 @@ export class App {
 		@inject(TYPES.CommitsController) private commitsController: CommitsController,
 		@inject(TYPES.FriendsController) private friendsController: FriendsController,
 		@inject(TYPES.MessagesController) private messagesController: MessagesController,
+		@inject(TYPES.SocketController) private socketController: SocketController,
 	) {
 		this.app = express();
 		this.port = process.env.PORT || 4000;
@@ -61,7 +63,8 @@ export class App {
 	public async init(): Promise<void> {
 		this.useMidleWare();
 		this.useRouters();
-		this.httpServer.listen(4000, '192.168.0.107', () => {
+		const server = this.socketController.getServer();
+		server.listen(4000, '192.168.1.150', () => {
 			console.log(`🚀 Server ready at 192.168.1.150:${this.port}`);
 		});
 	}

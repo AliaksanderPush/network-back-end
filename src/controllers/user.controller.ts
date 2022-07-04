@@ -4,6 +4,7 @@ import { BaseController } from '../common/base.controller';
 import { injectable, inject } from 'inversify';
 import { TYPES } from '../types';
 import multer from 'multer';
+import { SocketController } from './socket.controller';
 import { RoleMidleware } from '../middleWares/roles.midleware';
 import { storageConfig } from '../configs/multer.config';
 import 'reflect-metadata';

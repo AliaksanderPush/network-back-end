@@ -28,13 +28,20 @@ export class FriendsServise {
 	async getFriends(id: string): Promise<IFriend[] | null> {
 		const result = await FriendsModel.find({
 			friends: { $in: [id] },
-		}).populate(['friends', 'messages']);
+		}).populate({ path: 'messages' });
 		return result;
 	}
 
 	async deleteFriend(friendId: string, myId: string): Promise<IFriend | null> {
-		const result = await FriendsModel.findByIdAndDelete(friendId);
-		await MessageModel.deleteMany({ friendBy: friendId });
-		return result;
+		const modelFriends = await FriendsModel.findOne({
+			friends: { $all: [friendId, myId] },
+		});
+		if (modelFriends) {
+			const result = await FriendsModel.findByIdAndDelete(modelFriends?._id);
+			await MessageModel.deleteMany({ friendBy: friendId });
+			return result;
+		} else {
+			return null;
+		}
 	}
 }

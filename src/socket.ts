@@ -1,8 +1,7 @@
-import { Server, Socket } from 'socket.io';
-import socket from 'socket.io';
+import socket, { Socket } from 'socket.io';
 
 export function sockets(io: socket.Server) {
-	io.on('connection', (socket: any) => {
+	io.on('connection', (socket: Socket) => {
 		console.log('a user Connecterd!!!', socket.id);
 	});
 }

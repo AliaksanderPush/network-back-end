@@ -32,7 +32,7 @@ export class MessagesServise {
 			$addToSet: { messages: newMessage._id },
 		});
 
-		return newMessage;
+		return newMessage.populate({ path: 'user' });
 	}
 
 	async deleteMessage(id: string, friendRoomId: string): Promise<IMessage | null> {
