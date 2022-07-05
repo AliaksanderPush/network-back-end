@@ -15,7 +15,6 @@ import { MessagesController } from './controllers/messages.controller';
 import { LastSeenUpdate } from './middleWares/lastSeen.middleware';
 import { createServer } from 'http';
 import http from 'http';
-import { sockets } from './socket';
 import { SocketController } from './controllers/socket.controller';
 
 @injectable()
@@ -64,8 +63,8 @@ export class App {
 		this.useMidleWare();
 		this.useRouters();
 		this.socketController.getServer(this.io);
-		this.httpServer.listen(4000, '192.168.0.100', () => {
-			console.log(`🚀 Server ready at 192.168.0.100:${this.port}`);
+		this.httpServer.listen(4000, '192.168.1.150', () => {
+			console.log(`🚀 Server ready at 192.168.1.150:${this.port}`);
 		});
 	}
 }

@@ -39,7 +39,6 @@ export class FriendsController extends BaseController {
 		const { id } = req.params;
 		const myId = req.user._id;
 		try {
-			const { id, myId } = this.socketController.createFrendsChat();
 			const result = await this.friendsServise.addNewFriends(id, myId);
 			if (result) {
 				this.socketController.broadenFrendsChat(result);
@@ -57,7 +56,10 @@ export class FriendsController extends BaseController {
 		const myId = req.user._id;
 		try {
 			const result = await this.friendsServise.getFriends(myId);
-
+			if (result) {
+				this.socketController.getAllFrindesChats(result);
+				this.socketController.joinMessage(myId);
+			}
 			return this.ok(res, result);
 		} catch (err) {
 			console.log(err);
