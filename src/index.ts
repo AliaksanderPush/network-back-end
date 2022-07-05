@@ -14,7 +14,6 @@ import { FriendsController } from './controllers/friends.controller';
 import { FriendsServise } from './service/friends.service';
 import { MessagesServise } from './service/messages.service';
 import { MessagesController } from './controllers/messages.controller';
-import { sockets } from './socket';
 import { SocketController } from './controllers/socket.controller';
 
 async function bootstrap() {
@@ -50,6 +49,5 @@ async function bootstrap() {
 	const app = container.get<App>(TYPES.App);
 	await app.init();
 	connection();
-	sockets(app.io);
 }
 bootstrap();

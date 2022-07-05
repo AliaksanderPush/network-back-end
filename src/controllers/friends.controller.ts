@@ -3,11 +3,15 @@ import { BaseController } from '../common/base.controller';
 import { injectable, inject } from 'inversify';
 import { TYPES } from '../types';
 import { FriendsServise } from '../service/friends.service';
+import { SocketController } from './socket.controller';
 import 'reflect-metadata';
 
 @injectable()
 export class FriendsController extends BaseController {
-	constructor(@inject(TYPES.FriendsServise) protected friendsServise: FriendsServise) {
+	constructor(
+		@inject(TYPES.FriendsServise) protected friendsServise: FriendsServise,
+		@inject(TYPES.SocketController) protected socketController: SocketController,
+	) {
 		super();
 		this.bindRouters([
 			{
@@ -35,11 +39,17 @@ export class FriendsController extends BaseController {
 		const { id } = req.params;
 		const myId = req.user._id;
 		try {
+			const { id, myId } = this.socketController.createFrendsChat();
 			const result = await this.friendsServise.addNewFriends(id, myId);
-			return this.ok(res, result);
+			if (result) {
+				this.socketController.broadenFrendsChat(result);
+				return this.ok(res, result);
+			} else {
+				this.send(res, 400, 'Friend was not created!');
+			}
 		} catch (err) {
 			console.log(err);
-			this.send(res, 400, 'Friend was not created!');
+			this.send(res, 400, 'Error in FrendsService!');
 		}
 	}
 
@@ -47,6 +57,7 @@ export class FriendsController extends BaseController {
 		const myId = req.user._id;
 		try {
 			const result = await this.friendsServise.getFriends(myId);
+
 			return this.ok(res, result);
 		} catch (err) {
 			console.log(err);

@@ -63,9 +63,9 @@ export class App {
 	public async init(): Promise<void> {
 		this.useMidleWare();
 		this.useRouters();
-		const server = this.socketController.getServer();
-		server.listen(4000, '192.168.1.150', () => {
-			console.log(`🚀 Server ready at 192.168.1.150:${this.port}`);
+		this.socketController.getServer(this.io);
+		this.httpServer.listen(4000, '192.168.0.100', () => {
+			console.log(`🚀 Server ready at 192.168.0.100:${this.port}`);
 		});
 	}
 }

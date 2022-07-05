@@ -1,3 +1,4 @@
+/*
 import socket, { Socket } from 'socket.io';
 
 export function sockets(io: socket.Server) {
@@ -5,3 +6,4 @@ export function sockets(io: socket.Server) {
 		console.log('a user Connecterd!!!', socket.id);
 	});
 }
+*/
