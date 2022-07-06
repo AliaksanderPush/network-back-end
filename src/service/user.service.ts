@@ -9,7 +9,7 @@ import 'reflect-metadata';
 import { nanoid } from 'nanoid';
 import { TYPES } from '../types';
 import { IUserResponseToClient } from '../dto/userReregistrResponse';
-import { IJwtTokens, IRefreshToken, IToken } from '../dto/token.dto';
+import { IJwtTokens, IRefreshToken } from '../dto/token.dto';
 import { verify } from 'jsonwebtoken';
 import { IUserPayload } from '../dto/userPayload.dto';
 import fs from 'fs';

@@ -2,14 +2,16 @@ import { Request, Response, NextFunction } from 'express';
 import { BaseController } from '../common/base.controller';
 import { injectable, inject } from 'inversify';
 import { TYPES } from '../types';
-import { FriendsServise } from '../service/friends.service';
-import 'reflect-metadata';
 import { MessagesServise } from '../service/messages.service';
-import { App } from '../main';
+import { SocketController } from './socket.controller';
+import 'reflect-metadata';
 
 @injectable()
 export class MessagesController extends BaseController {
-	constructor(@inject(TYPES.MessagesServise) protected messagesServise: MessagesServise) {
+	constructor(
+		@inject(TYPES.MessagesServise) protected messagesServise: MessagesServise,
+		@inject(TYPES.SocketController) protected socketController: SocketController,
+	) {
 		super();
 		this.bindRouters([
 			{
@@ -43,6 +45,9 @@ export class MessagesController extends BaseController {
 		const { id } = req.params;
 		try {
 			const result = await this.messagesServise.getmessageAll(id);
+			if (result) {
+				this.socketController.getAllMessage(result);
+			}
 			return this.ok(res, result);
 		} catch (err) {
 			console.log(err);
