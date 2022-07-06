@@ -25,6 +25,9 @@ export class SocketController {
 		this.io.on('connection', (socket: Socket) => {
 			this.socket = socket;
 			console.log('a user Connecterd!!!', socket.id);
+			this.socket.on(EVENTS.CLIENT.JOIN_ROOM, (userName) => {
+				this.socket.emit(EVENTS.SERVER.JOINED_ROOM, `${userName} is join`);
+			});
 		});
 	}
 
@@ -39,17 +42,17 @@ export class SocketController {
 	}
 
 	broadenFrendsChat(frendsObj: IFriend) {
-		this.socket.join(frendsObj._id);
-		this.socket.broadcast.emit(EVENTS.SERVER.ROOMS, frendsObj);
+		console.log('addFriend>>>', frendsObj);
 		this.socket.emit(EVENTS.SERVER.ROOM, frendsObj);
 	}
 
-	joinMessage(id: string) {
-		console.log('my>>>>', id);
-		this.io.emit(EVENTS.SERVER.JOINED_ROOM, id);
+	joinMessage(currName: string) {
+		console.log('popali v join');
+		this.socket.emit(EVENTS.SERVER.JOINED_ROOM, currName);
 	}
 
-	getAllFrindesChats(frendschats: IFriend[]) {
-		this.socket.emit(EVENTS.SERVER.ROOMS, frendschats);
+	getAllFrindesChats(frendschats: IFriend[], currName: string) {
+		console.log('popali v chats');
+		this.io.emit(EVENTS.SERVER.ROOMS, frendschats);
 	}
 }

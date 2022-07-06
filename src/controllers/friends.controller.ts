@@ -5,12 +5,14 @@ import { TYPES } from '../types';
 import { FriendsServise } from '../service/friends.service';
 import { SocketController } from './socket.controller';
 import 'reflect-metadata';
+import { UserService } from '../service/user.service';
 
 @injectable()
 export class FriendsController extends BaseController {
 	constructor(
 		@inject(TYPES.FriendsServise) protected friendsServise: FriendsServise,
 		@inject(TYPES.SocketController) protected socketController: SocketController,
+		@inject(TYPES.UserService) protected userService: UserService,
 	) {
 		super();
 		this.bindRouters([
@@ -56,9 +58,10 @@ export class FriendsController extends BaseController {
 		const myId = req.user._id;
 		try {
 			const result = await this.friendsServise.getFriends(myId);
-			if (result) {
-				this.socketController.getAllFrindesChats(result);
-				this.socketController.joinMessage(myId);
+			const currentUser = await this.userService.getUser(myId);
+			if (result && currentUser) {
+				this.socketController.getAllFrindesChats(result, currentUser.name);
+				//this.socketController.joinMessage(currentUser.name);
 			}
 			return this.ok(res, result);
 		} catch (err) {
