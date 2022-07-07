@@ -166,4 +166,7 @@ export class UserService {
 
 		return result?.avatar;
 	}
+	async searchByResetCode(resetCode: string): Promise<IUsers | null> {
+		return await UserModel.findOne({ resetCode });
+	}
 }
