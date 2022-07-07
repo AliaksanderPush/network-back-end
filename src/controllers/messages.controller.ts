@@ -46,7 +46,7 @@ export class MessagesController extends BaseController {
 		try {
 			const result = await this.messagesServise.getmessageAll(id);
 			if (result) {
-				this.socketController.getAllMessage(result);
+				this.socketController.getAllMessages(result);
 			}
 			return this.ok(res, result);
 		} catch (err) {
@@ -61,6 +61,10 @@ export class MessagesController extends BaseController {
 		const { content, image } = req.body;
 		try {
 			const result = await this.messagesServise.addNewMessage(userId, id, content, image);
+
+			if (result) {
+				this.socketController.getMessage(result);
+			}
 			return this.ok(res, result);
 		} catch (err) {
 			console.log(err);

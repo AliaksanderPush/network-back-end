@@ -36,23 +36,22 @@ export class SocketController {
 	}
 
 	broadenFrendsChat(frendsObj: IFriend) {
-		console.log('addFriend>>>', frendsObj);
 		this.socket.emit(EVENTS.SERVER.ROOM, frendsObj);
 	}
 
 	joinMessage(currName: string) {
-		console.log('popali v join');
 		this.socket.emit(EVENTS.SERVER.JOINED_ROOM, currName);
 	}
 
 	getAllFrindesChats(frendschats: IFriend[], currName: string) {
-		console.log('popali v chats');
 		this.io.emit(EVENTS.SERVER.ROOMS, frendschats);
 	}
 
-	getAllMessage(allMessages: IMessage[]) {
-		console.log('popali v message');
-		console.log('message>>>', allMessages);
+	getAllMessages(allMessages: IMessage[]) {
 		this.io.emit(EVENTS.SERVER.ROOM_MESSAGES, allMessages);
+	}
+	getMessage(message: IMessage) {
+		console.log('message>>>', message);
+		this.io.emit(EVENTS.SERVER.SEND_MESSAGE, message);
 	}
 }
