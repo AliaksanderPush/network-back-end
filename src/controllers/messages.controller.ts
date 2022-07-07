@@ -59,6 +59,7 @@ export class MessagesController extends BaseController {
 		const { id } = req.params;
 		const userId = req.user._id;
 		const { content, image } = req.body;
+
 		try {
 			const result = await this.messagesServise.addNewMessage(userId, id, content, image);
 
