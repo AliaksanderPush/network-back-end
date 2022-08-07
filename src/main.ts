@@ -63,8 +63,8 @@ export class App {
 		this.useMidleWare();
 		this.useRouters();
 		this.socketController.getServer(this.io);
-		this.httpServer.listen(4000, '192.168.0.107', () => {
-			console.log(`🚀 Server ready at 192.168.1.150:${this.port}`);
+		this.httpServer.listen(4000, '192.168.0.147', () => {
+			console.log(`🚀 Server ready at 192.168.0.147:${this.port}`);
 		});
 	}
 }

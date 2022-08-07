@@ -4,7 +4,6 @@ import { BaseController } from '../common/base.controller';
 import { injectable, inject } from 'inversify';
 import { TYPES } from '../types';
 import multer from 'multer';
-import { SocketController } from './socket.controller';
 import { RoleMidleware } from '../middleWares/roles.midleware';
 import { storageConfig } from '../configs/multer.config';
 import 'reflect-metadata';
@@ -20,7 +19,7 @@ export class UserController extends BaseController {
 				path: '/user/:id',
 				methot: 'put',
 				func: this.updateUser,
-				middlewares: [new RoleMidleware(['user'])],
+				middlewares: [],
 			},
 			{
 				path: '/user/:id',
@@ -60,6 +59,7 @@ export class UserController extends BaseController {
 	async updateUser(req: Request, res: Response, next: NextFunction) {
 		const id = req.params.id;
 		const data = req.body;
+
 		const response = await this.userService.putUser(id, data);
 		if (!response) {
 			this.send(res, 400, 'This user is not exist');

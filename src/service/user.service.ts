@@ -30,9 +30,9 @@ export class UserService {
 
 		const hashPass = await hash(password, 7);
 		try {
-			let userRole = await this.findRole('user');
+			let userRole = await this.findRole('admin');
 			if (!userRole) {
-				userRole = await Role.create({ value: 'user' });
+				userRole = await Role.create({ value: 'admin' });
 			}
 
 			const user = await UserModel.create({
@@ -67,8 +67,15 @@ export class UserService {
 	}
 
 	async putUser(userId: string, data: IUsers): Promise<IUsers | null> {
+		const { name, email, age, city, gender } = data;
 		try {
-			return await UserModel.findByIdAndUpdate(userId, data, { returnDocument: 'after' });
+			const upDUser = await UserModel.findOneAndUpdate(
+				{ _id: userId },
+				{ $set: { age, name, email, city, gender } },
+				{ returnDocument: 'after' },
+			);
+
+			return upDUser;
 		} catch (err) {
 			return Promise.reject(err);
 		}

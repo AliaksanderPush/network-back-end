@@ -8,11 +8,13 @@ export class AuthMiddleWare implements IMiddleware {
 		if (req.headers.authorization) {
 			try {
 				const token = req.headers.authorization.split(' ')[1];
+				console.log('udate>>>', token);
 				const decData = verify(token, process.env.SECRET as string) as IUserPayload;
 				const { email, role, _id } = decData;
 				req.user = { email, role, _id };
 				next();
 			} catch (err) {
+				console.log('udateErr>>>', err);
 				res.status(403).json('Пользователь не авторизован');
 			}
 		} else {

@@ -9,7 +9,7 @@ const UserShema: Schema = new Schema({
 	email: { type: String, unique: true, required: true },
 	gender: { type: String },
 	avatar: { type: String, default: '' },
-	roles: [{ type: String, ref: 'Role' }],
+	roles: [{ type: String, ref: 'Role', default: 'user' }],
 	resetCode: { type: String },
 	posts: [{ type: Schema.Types.ObjectId, ref: 'PostModel' }],
 	last_seen: { type: Date, default: new Date() },
